@@ -123,7 +123,7 @@ function registerOpenedCard(card) {
     openedCards.push(card);
 
     if (openedCards.length === 2) {
-        setTimeout(testCardMatch, 500);
+        testCardMatch();
     }
 }
 
@@ -142,15 +142,24 @@ function increaseMoveCounter() {
 }
 
 function matchOpenedCards() {
-    openedCards[0].classList.add('match');
-    openedCards[1].classList.add('match');
-    openedCards = [];
+    setTimeout(() => {
+        openedCards[0].classList.add('match');
+        openedCards[1].classList.add('match');
+        openedCards = [];
+    }, 320);
 }
 
 function closeOpenedCards() {
-    openedCards[0].classList.remove('open', 'show');
-    openedCards[1].classList.remove('open', 'show');
-    openedCards = [];
+    setTimeout(() => {
+        openedCards[0].classList.add('unmatch');
+        openedCards[1].classList.add('unmatch');
+    }, 320);
+    
+    setTimeout(() => {
+        openedCards[0].classList.remove('open', 'show', 'unmatch');
+        openedCards[1].classList.remove('open', 'show', 'unmatch');
+        openedCards = [];
+    }, 1000);
 }
 
 function setStarScore() {
