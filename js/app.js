@@ -30,9 +30,11 @@ const htmlPopupMsg = document.getElementsByClassName("popup-message")[0];
 const htmlPopupCloseBtn = document.getElementsByClassName("popup-close-btn")[0];
 const htmlPopupRestartBtn = document.getElementsByClassName("popup-restart-btn")[0];
 let timer = 0;
+let matches = 0;
 let openedCards = [];
 let cardClickListener;
 let moves;
+let timerInterval;
 
 initialize();
 
@@ -56,7 +58,11 @@ function resetTimer() {
 }
 
 function startTimer() {
-  setInterval(incrementTimer, 1000);
+  timerInterval = setInterval(incrementTimer, 1000);
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
 }
 
 function formatTime(seconds) {
@@ -76,6 +82,34 @@ function incrementTimer() {
   htmlTimer.innerHTML = formatTime(timer);
   testTimeOut();
 }
+
+function testTimeOut() {
+  if (timer === 180) alertGameOver();
+}
+
+function alertGameOver() {
+  stopTimer();
+  popUp("Time out!");
+}
+
+function alertWin() {
+  stopTimer();
+  popUp("You win!");
+}
+
+function popUp(message) {
+  htmlPopupMsg.innerHTML = message;
+  htmlPopup.style.visibility = 'visible';
+}
+
+htmlPopupCloseBtn.addEventListener('click', function() {
+  htmlPopup.style.visibility = 'hidden';
+});
+
+htmlRestartBtn.addEventListener('click', function() {
+  htmlPopup.style.visibility = 'hidden';
+  initialize();
+});
 
 function resetMoves() {
     moves = 0;
@@ -181,8 +215,14 @@ function matchOpenedCards() {
     setTimeout(() => {
         openedCards[0].classList.add('match');
         openedCards[1].classList.add('match');
+        incrementMatches();
         openedCards = [];
     }, 320);
+}
+
+function incrementMatches() {
+  matches++;
+  if (matches === 8) alertWin();
 }
 
 function closeOpenedCards() {
