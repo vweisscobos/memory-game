@@ -24,6 +24,12 @@ const htmlCards = document.getElementsByClassName('card');
 const htmlMoves = document.getElementsByClassName('moves')[0];
 const htmlRestartBtn = document.getElementsByClassName('restart')[0];
 const htmlStarScore = document.getElementsByClassName("star");
+const htmlTimer = document.getElementsByClassName("timer")[0];
+const htmlPopup = document.getElementsByClassName("popup")[0];
+const htmlPopupMsg = document.getElementsByClassName("popup-message")[0];
+const htmlPopupCloseBtn = document.getElementsByClassName("popup-close-btn")[0];
+const htmlPopupRestartBtn = document.getElementsByClassName("popup-restart-btn")[0];
+let timer = 0;
 let openedCards = [];
 let cardClickListener;
 let moves;
@@ -31,6 +37,7 @@ let moves;
 initialize();
 
 function initialize() {
+    resetTimer();
     disableCardsClick();
     resetMoves();
     resetDeck();
@@ -41,6 +48,33 @@ function initialize() {
         hideAllCards();
         enableCardsClick();
     }, 3000);
+}
+
+function resetTimer() {
+  timer = 0;
+  htmlTimer.innerHTML = formatTime(timer);
+}
+
+function startTimer() {
+  setInterval(incrementTimer, 1000);
+}
+
+function formatTime(seconds) {
+  let min = Math.floor(seconds/60);
+  let sec = seconds % 60;
+
+  min = min < 10 ? '0' + min : min;
+  sec = sec < 10 ? '0' + sec : sec;
+
+  console.log(min, sec);
+
+  return min + ':' + sec;
+}
+
+function incrementTimer() {
+  timer++;
+  htmlTimer.innerHTML = formatTime(timer);
+  testTimeOut();
 }
 
 function resetMoves() {
@@ -108,6 +142,8 @@ function populateCard(card, picture) {
 }
 
 function onCardClick(evt) {
+    if (moves === 0) startTimer();
+
     if (evt.target.classList.contains('card') && openedCards.length < 2) {
         flipCard(evt.target);
         registerOpenedCard(evt.target);
