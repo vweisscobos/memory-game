@@ -231,17 +231,6 @@ function closeOpenedCards() {
   }, 1000);
 }
 
-//  helper functions
-function formatTime(seconds) {
-  let min = Math.floor(seconds/60);
-  let sec = seconds % 60;
-
-  min = min < 10 ? '0' + min : min;
-  sec = sec < 10 ? '0' + sec : sec;
-
-  return min + ':' + sec;
-}
-
 function registerRevealedCard(card) {
   openedCards.push(card);
 
@@ -267,9 +256,20 @@ function matchRevealedCards() {
   }, 320);
 }
 
+//  helper functions
+function formatTime(seconds) {
+  let min = Math.floor(seconds/60);
+  let sec = seconds % 60;
+
+  min = min < 10 ? '0' + min : min;
+  sec = sec < 10 ? '0' + sec : sec;
+
+  return min + ':' + sec;
+}
+
 // Shuffle a given array
 function shuffle(array) {
-    var currentIndex = array.length, temporaryValue, randomIndex;
+    let currentIndex = array.length, temporaryValue, randomIndex;
 
     while (currentIndex !== 0) {
         randomIndex = Math.floor(Math.random() * currentIndex);
