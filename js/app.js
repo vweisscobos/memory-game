@@ -36,7 +36,10 @@ const htmlPopupStarRating = document.getElementsByClassName("popup-star-rating")
 const htmlPopupTime = document.getElementsByClassName("popup-time")[0];
 const htmlPopupMoves = document.getElementsByClassName("popup-moves")[0];
 
-const MEMORIZATION_TIME = 3000;
+const MOVES_TO_ZERO_STARS = 36;
+const MOVES_TO_ONE_STARS = 28;
+const MOVES_TO_TWO_STARS = 20;
+const MEMORIZATION_TIME = 5000;
 const GAME_DURATION = 90;
 
 let timer = GAME_DURATION;
@@ -172,9 +175,9 @@ function increaseMoveCounter() {
 }
 
 function updateStarRating() {
-  if (moves === 20) htmlStarRating[2].innerHTML = "";
-  if (moves === 28) htmlStarRating[1].innerHTML = "";
-  if (moves === 36) htmlStarRating[0].innerHTML = "";
+  if (moves === MOVES_TO_TWO_STARS) htmlStarRating[2].innerHTML = "";
+  if (moves === MOVES_TO_ONE_STARS) htmlStarRating[1].innerHTML = "";
+  if (moves === MOVES_TO_ZERO_STARS) htmlStarRating[0].innerHTML = "";
 }
 
 //  cards behavior functions
@@ -200,7 +203,7 @@ function hideAllCards() {
 }
 
 function onCardClick(evt) {
-  if (!evt.target.classList.contains("card")) return; //  prevent propagation of click evt on another elements
+  if (!evt.target.classList.contains("card")) return; //  secure that just cards propagate click events
   if (moves === 0) startTimer();  //  if none card was revealed yet, initialize timer
   if (openedCards[0] && openedCards[0] === evt.target) return;  //  prevent register the same card as revealed twice
   if (evt.target.classList.contains('match')) return; //  prevent matched cards to be register as revealed
