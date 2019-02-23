@@ -1,5 +1,5 @@
 /*
- * Create a list that holds all of your cards
+ * Create a list that holds all cards
  */
 const cards = [
     'fa-diamond',
@@ -19,17 +19,27 @@ const cards = [
     'fa-bomb',
     'fa-bomb'
 ];
+
+//  create references to all html elements we need to handle with
 const htmlDeck = document.getElementsByClassName('deck')[0];
 const htmlCards = document.getElementsByClassName('card');
 const htmlMoves = document.getElementsByClassName('moves')[0];
 const htmlRestartBtn = document.getElementsByClassName('restart')[0];
-const htmlStarScore = document.getElementsByClassName("star");
+const htmlStarRating = document.getElementsByClassName("star");
+const htmlScorePanel = document.getElementsByClassName("score-panel")[0];
 const htmlTimer = document.getElementsByClassName("timer")[0];
 const htmlPopup = document.getElementsByClassName("popup")[0];
 const htmlPopupMsg = document.getElementsByClassName("popup-message")[0];
 const htmlPopupCloseBtn = document.getElementsByClassName("popup-close-btn")[0];
 const htmlPopupRestartBtn = document.getElementsByClassName("popup-restart-btn")[0];
-let timer = 0;
+const htmlPopupStarRating = document.getElementsByClassName("popup-star-rating")[0];
+const htmlPopupTime = document.getElementsByClassName("popup-time")[0];
+const htmlPopupMoves = document.getElementsByClassName("popup-moves")[0];
+
+const MEMORIZATION_TIME = 3000;
+const GAME_DURATION = 90;
+
+let timer = GAME_DURATION;
 let matches = 0;
 let openedCards = [];
 let cardClickListener;
@@ -38,113 +48,146 @@ let timerInterval;
 
 initialize();
 
+htmlPopupCloseBtn.addEventListener('click', () => {
+  htmlPopup.style.visibility = 'hidden';
+});
+
+htmlPopupRestartBtn.addEventListener('click', () => {
+  htmlPopup.style.visibility = 'hidden';
+  initialize();
+});
+
+htmlRestartBtn.addEventListener('click', () => {
+  initialize();
+});
+
+//  Set and reset game functions
+
 function initialize() {
-    resetTimer();
-    disableCardsClick();
-    resetMoves();
-    resetDeck();
-    resetStarScore();
-    populateDeck();
-    showAllCards();
-    setTimeout(() => {
-        hideAllCards();
-        enableCardsClick();
-    }, 3000);
+  resetTimer();
+  resetMatches();
+  resetOpenedCards();
+  disableCardsClickHandler();
+  resetMoves();
+  resetDeck();
+  resetStarRating();
+  populateDeck();
+  revealAllCards();
+  setTimeout(() => {
+    hideAllCards();
+    enableCardsClickHandler();
+  }, MEMORIZATION_TIME);
 }
 
 function resetTimer() {
-  timer = 0;
+  timer = GAME_DURATION;
   htmlTimer.innerHTML = formatTime(timer);
+  stopTimer();
+}
+
+function resetOpenedCards() {
+  openedCards = [];
 }
 
 function startTimer() {
-  timerInterval = setInterval(incrementTimer, 1000);
+  timerInterval = setInterval(decrementTimer, 1000);
+}
+
+function resetMatches() {
+  matches = 0;
 }
 
 function stopTimer() {
   clearInterval(timerInterval);
 }
 
-function formatTime(seconds) {
-  let min = Math.floor(seconds/60);
-  let sec = seconds % 60;
-
-  min = min < 10 ? '0' + min : min;
-  sec = sec < 10 ? '0' + sec : sec;
-
-  console.log(min, sec);
-
-  return min + ':' + sec;
+function resetDeck() {
+  for (let i = 0; i < htmlCards.length; i++) {
+    htmlCards[i].classList.remove('match', 'open', 'show');
+  }
 }
 
-function incrementTimer() {
-  timer++;
+function resetStarRating() {
+  for (let i = 0; i < htmlStarRating.length; i++) {
+    htmlStarRating[i].innerHTML = "<i class='fa fa-star' />"
+  }
+}
+
+function resetMoves() {
+  moves = 0;
+  htmlMoves.innerHTML = moves || 0;
+}
+
+function populateDeck() {
+  const cardTypes = shuffle(cards);
+
+  for (let i = 0; i < cardTypes.length; i++) {
+    populateCard(htmlCards[i], cardTypes[i]);
+  }
+}
+
+function populateCard(card, picture) {
+  card.innerHTML = `<i class='fa ${picture}'/></i>`
+}
+
+//  game behavior functions
+
+function incrementMatches() {
+  matches++;
+  if (matches === 8) alertWin();
+}
+
+function decrementTimer() {
+  if (timer > 0) timer--;
+  else alertGameOver();
   htmlTimer.innerHTML = formatTime(timer);
-  testTimeOut();
-}
-
-function testTimeOut() {
-  if (timer === 180) alertGameOver();
 }
 
 function alertGameOver() {
   stopTimer();
-  popUp("Time out!");
-}
-
-function alertWin() {
-  stopTimer();
-  popUp("You win!");
-}
-
-function popUp(message) {
-  htmlPopupMsg.innerHTML = message;
+  htmlPopupMsg.innerHTML = "<h2>You Loose! Time out!</h2>";
+  htmlPopupStarRating.innerHTML = "";
+  htmlPopupMoves.innerHTML = "";
+  htmlPopupTime.innerHTML = "";
   htmlPopup.style.visibility = 'visible';
 }
 
-htmlPopupCloseBtn.addEventListener('click', function() {
-  htmlPopup.style.visibility = 'hidden';
-});
+function alertWin() {
+  let starRating = new Array(htmlScorePanel.getElementsByClassName('fa-star').length).fill(1);
 
-htmlRestartBtn.addEventListener('click', function() {
-  htmlPopup.style.visibility = 'hidden';
-  initialize();
-});
-
-function resetMoves() {
-    moves = 0;
-    htmlMoves.innerHTML = moves;
+  stopTimer();
+  htmlPopupMsg.innerHTML = "<h2>You Won!</h2>";
+  htmlPopupStarRating.innerHTML = starRating.reduce((acc) => {
+    return acc + "<span class='star'><i class='fa fa-star'></i></span>"
+  }, '');
+  htmlPopupMoves.innerHTML = moves + ' moves';
+  htmlPopupTime.innerHTML = 90 - timer + ' seconds';
+  htmlPopup.style.visibility = 'visible';
 }
 
-function resetDeck() {
-    for (let i = 0; i < htmlCards.length; i++) {
-        htmlCards[i].classList.remove('match', 'open', 'show');
-    }
+function increaseMoveCounter() {
+  moves++;
+  updateStarRating();
+  htmlMoves.innerHTML = moves;
 }
 
-function resetStarScore() {
-    for (let i = 0; i < htmlStarScore.length; i++) {
-        htmlStarScore[i].innerHTML = "<i class='fa fa-star' />"
-    }
+function updateStarRating() {
+  if (moves === 20) htmlStarRating[2].innerHTML = "";
+  if (moves === 28) htmlStarRating[1].innerHTML = "";
+  if (moves === 36) htmlStarRating[0].innerHTML = "";
 }
 
-function disableCardsClick() {
+//  cards behavior functions
+
+function disableCardsClickHandler() {
     htmlDeck.removeEventListener('click', onCardClick);
 }
 
-function enableCardsClick() {
+function enableCardsClickHandler() {
     cardClickListener = htmlDeck.addEventListener('click', onCardClick);
 }
 
-function populateDeck() {
-    const cardTypes = shuffle(cards);
-
-    for (let i = 0; i < cardTypes.length; i++) {
-        populateCard(htmlCards[i], cardTypes[i]);
-    }
-}
-
-function showAllCards() {
+function revealAllCards() {
     for (let i = 0; i < htmlCards.length; i++) {
         htmlCards[i].classList.add('show', 'add');
     }
@@ -156,7 +199,72 @@ function hideAllCards() {
     }
 }
 
-// Shuffle function from http://stackoverflow.com/a/2450976
+function onCardClick(evt) {
+  if (!evt.target.classList.contains("card")) return; //  prevent propagation of click evt on another elements
+  if (moves === 0) startTimer();  //  if none card was revealed yet, initialize timer
+  if (openedCards[0] && openedCards[0] === evt.target) return;  //  prevent register the same card as revealed twice
+  if (evt.target.classList.contains('match')) return; //  prevent matched cards to be register as revealed
+  if (openedCards.length < 2) {
+    revealCard(evt.target);
+    registerRevealedCard(evt.target);
+  }
+}
+
+function revealCard(card) {
+  card.classList.add('open', 'show');
+  increaseMoveCounter();
+}
+
+function closeOpenedCards() {
+  setTimeout(() => {
+    openedCards[0].classList.add('unmatch');
+    openedCards[1].classList.add('unmatch');
+  }, 320);
+
+  setTimeout(() => {
+    openedCards[0].classList.remove('open', 'show', 'unmatch');
+    openedCards[1].classList.remove('open', 'show', 'unmatch');
+    openedCards = [];
+  }, 1000);
+}
+
+//  helper functions
+function formatTime(seconds) {
+  let min = Math.floor(seconds/60);
+  let sec = seconds % 60;
+
+  min = min < 10 ? '0' + min : min;
+  sec = sec < 10 ? '0' + sec : sec;
+
+  return min + ':' + sec;
+}
+
+function registerRevealedCard(card) {
+  openedCards.push(card);
+
+  if (openedCards.length === 2) {
+    testCardMatch();
+  }
+}
+
+function testCardMatch() {
+  let cardType1 = openedCards[0].firstElementChild.classList.item(1);
+  let cardType2 = openedCards[1].firstElementChild.classList.item(1);
+
+  if (cardType1 === cardType2) matchRevealedCards();
+  else closeOpenedCards();
+}
+
+function matchRevealedCards() {
+  setTimeout(() => {
+    openedCards[0].classList.add('match');
+    openedCards[1].classList.add('match');
+    incrementMatches();
+    openedCards = [];
+  }, 320);
+}
+
+// Shuffle a given array
 function shuffle(array) {
     var currentIndex = array.length, temporaryValue, randomIndex;
 
@@ -170,80 +278,3 @@ function shuffle(array) {
 
     return array;
 }
-
-function populateCard(card, picture) {
-    card.innerHTML = `<i class='fa ${picture}'/></i>`
-}
-
-function onCardClick(evt) {
-    if (moves === 0) startTimer();
-
-    if (evt.target.classList.contains('card') && openedCards.length < 2) {
-        flipCard(evt.target);
-        registerOpenedCard(evt.target);
-    }
-}
-
-function flipCard(card) {
-    card.classList.add('open', 'show');
-    increaseMoveCounter();
-}
-
-function registerOpenedCard(card) {
-    openedCards.push(card);
-
-    if (openedCards.length === 2) {
-        testCardMatch();
-    }
-}
-
-function testCardMatch() {
-    let cardType1 = openedCards[0].firstElementChild.classList.item(1);
-    let cardType2 = openedCards[1].firstElementChild.classList.item(1);
-
-    if (cardType1 === cardType2) matchOpenedCards();
-    else closeOpenedCards();
-}
-
-function increaseMoveCounter() {
-    moves++;
-    setStarScore();
-    htmlMoves.innerHTML = moves;
-}
-
-function matchOpenedCards() {
-    setTimeout(() => {
-        openedCards[0].classList.add('match');
-        openedCards[1].classList.add('match');
-        incrementMatches();
-        openedCards = [];
-    }, 320);
-}
-
-function incrementMatches() {
-  matches++;
-  if (matches === 8) alertWin();
-}
-
-function closeOpenedCards() {
-    setTimeout(() => {
-        openedCards[0].classList.add('unmatch');
-        openedCards[1].classList.add('unmatch');
-    }, 320);
-    
-    setTimeout(() => {
-        openedCards[0].classList.remove('open', 'show', 'unmatch');
-        openedCards[1].classList.remove('open', 'show', 'unmatch');
-        openedCards = [];
-    }, 1000);
-}
-
-function setStarScore() {
-    if (moves > 16) htmlStarScore[2].innerHTML = "";
-    if (moves > 32) htmlStarScore[1].innerHTML = "";
-    if (moves > 48) htmlStarScore[0].innerHTML = "";
-}
-
-htmlRestartBtn.addEventListener('click', evt => {
-    initialize();
-});
