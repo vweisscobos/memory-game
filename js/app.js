@@ -28,9 +28,8 @@ const htmlPopupStarRating = document.getElementsByClassName("popup-star-rating")
 const htmlPopupTime = document.getElementsByClassName("popup-time")[0];
 const htmlPopupMoves = document.getElementsByClassName("popup-moves")[0];
 
-const MOVES_TO_ZERO_STARS = 36;
-const MOVES_TO_ONE_STARS = 28;
-const MOVES_TO_TWO_STARS = 20;
+const MOVES_TO_ONE_STARS = 30;
+const MOVES_TO_TWO_STARS = 22;
 const MEMORIZATION_TIME = 5000;
 const INITIAL_TIME = 0;
 
@@ -159,7 +158,6 @@ function increaseMoveCounter() {
 function updateStarRating() {
   if (moves === MOVES_TO_TWO_STARS) htmlStarRating[2].innerHTML = "";
   if (moves === MOVES_TO_ONE_STARS) htmlStarRating[1].innerHTML = "";
-  if (moves === MOVES_TO_ZERO_STARS) htmlStarRating[0].innerHTML = "";
 }
 
 //  cards behavior functions
