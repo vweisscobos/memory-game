@@ -3,20 +3,12 @@
  */
 const cards = [
     'fa-diamond',
-    'fa-diamond',
-    'fa-paper-plane-o',
     'fa-paper-plane-o',
     'fa-anchor',
-    'fa-anchor',
-    'fa-bolt',
     'fa-bolt',
     'fa-cube',
-    'fa-cube',
-    'fa-leaf',
     'fa-leaf',
     'fa-bicycle',
-    'fa-bicycle',
-    'fa-bomb',
     'fa-bomb'
 ];
 
@@ -122,7 +114,7 @@ function resetMoves() {
 }
 
 function populateDeck() {
-  const cardTypes = shuffle(cards);
+  const cardTypes = shuffle(cards.concat(cards));
 
   for (let i = 0; i < cardTypes.length; i++) {
     populateCard(htmlCards[i], cardTypes[i]);
