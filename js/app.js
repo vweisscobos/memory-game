@@ -32,9 +32,9 @@ const MOVES_TO_ZERO_STARS = 36;
 const MOVES_TO_ONE_STARS = 28;
 const MOVES_TO_TWO_STARS = 20;
 const MEMORIZATION_TIME = 5000;
-const GAME_DURATION = 90;
+const INITIAL_TIME = 0;
 
-let timer = GAME_DURATION;
+let timer = INITIAL_TIME;
 let matches = 0;
 let openedCards = [];
 let cardClickListener;
@@ -75,7 +75,7 @@ function initialize() {
 }
 
 function resetTimer() {
-  timer = GAME_DURATION;
+  timer = INITIAL_TIME;
   htmlTimer.innerHTML = formatTime(timer);
   stopTimer();
 }
@@ -85,7 +85,7 @@ function resetOpenedCards() {
 }
 
 function startTimer() {
-  timerInterval = setInterval(decrementTimer, 1000);
+  timerInterval = setInterval(incrementTimer, 1000);
 }
 
 function resetMatches() {
@@ -132,19 +132,9 @@ function incrementMatches() {
   if (matches === 8) alertWin();
 }
 
-function decrementTimer() {
-  if (timer > 0) timer--;
-  else alertGameOver();
+function incrementTimer() {
+  timer++;
   htmlTimer.innerHTML = formatTime(timer);
-}
-
-function alertGameOver() {
-  stopTimer();
-  htmlPopupMsg.innerHTML = "<h2>You Loose! Time out!</h2>";
-  htmlPopupStarRating.innerHTML = "";
-  htmlPopupMoves.innerHTML = "";
-  htmlPopupTime.innerHTML = "";
-  htmlPopup.style.visibility = 'visible';
 }
 
 function alertWin() {
@@ -156,7 +146,7 @@ function alertWin() {
     return acc + "<span class='star'><i class='fa fa-star'></i></span>"
   }, '');
   htmlPopupMoves.innerHTML = moves + ' moves';
-  htmlPopupTime.innerHTML = 90 - timer + ' seconds';
+  htmlPopupTime.innerHTML = timer + ' seconds';
   htmlPopup.style.visibility = 'visible';
 }
 
