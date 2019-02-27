@@ -9,7 +9,7 @@ Memory game developed as a requirement to complete the Udacity's Front End Nanod
 
 ## Instructions
 
-- Open index.html file on your favorite web broswer and try to find all the duplicated cards with fewer clicks as possible.
+- Open `index.html` file on your favorite web broswer and try to find all the duplicated cards with fewer clicks as possible.
 
 ## Acknowledgments
 
