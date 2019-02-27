@@ -1,20 +1,16 @@
 # Memory Game Project
 
-## Table of Contents
+Memory game developed as a requirement to complete the Udacity's Front End Nanodegree Program
 
-* [Instructions](#instructions)
-* [Contributing](#contributing)
+## Dependencies
+
+- Font Awesome - Icon set and toolkit
+- Google Fonts - Open Font Library
 
 ## Instructions
 
-The starter project has some HTML and CSS styling to display a static version of the Memory Game project. You'll need to convert this project from a static project to an interactive one. This will require modifying the HTML and CSS files, but primarily the JavaScript file.
+- Open index.html file on your favorite web broswer and try to find all the duplicated cards with fewer clicks as possible.
 
-To get started, open `js/app.js` and start building out the app's functionality
+## Acknowledgments
 
-For specific, detailed instructions, look at the project instructions in the [Udacity Classroom](https://classroom.udacity.com/me).
-
-## Contributing
-
-This repository is the starter code for _all_ Udacity students. Therefore, we most likely will not accept pull requests.
-
-For details, check out [CONTRIBUTING.md](CONTRIBUTING.md).
+- Static base code from [Udacity's fend-project-memory-game](https://github.com/udacity/fend-project-memory-game)
